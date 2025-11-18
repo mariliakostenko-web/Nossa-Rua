@@ -1,9 +1,5 @@
 package com.upx.nossarua.di
 
-import com.upx.nossarua.data.datasource.AppDataSource
-import com.upx.nossarua.data.datasource.AppDataSourceImpl
-import com.upx.nossarua.data.repository.AppRepository
-import com.upx.nossarua.data.repository.AppRepositoryImpl
 import com.upx.nossarua.data.service.AppService
 import com.upx.nossarua.utils.Constants
 import dagger.Module
@@ -25,19 +21,6 @@ object AppModule {
     fun provideService(retrofit: Retrofit): AppService {
         return retrofit.create(AppService::class.java)
     }
-
-    @Provides
-    @Singleton
-    fun provideDataSource(service: AppService): AppDataSource {
-        return AppDataSourceImpl(service)
-    }
-
-    @Provides
-    @Singleton
-    fun provideRepository(dataSource: AppDataSource): AppRepository {
-        return AppRepositoryImpl(dataSource)
-    }
-
 
     @Provides
     @Singleton

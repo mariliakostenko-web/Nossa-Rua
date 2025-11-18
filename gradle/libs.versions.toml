@@ -25,6 +25,7 @@ secretsGradlePluginVersion = "2.0.1"
 mapsCompose = "4.3.3"
 places = "3.5.0"
 playServicesMaps = "19.0.0"
+mapsUtils = "3.8.0"
 
 [libraries]
 accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanistSystemuicontroller" }

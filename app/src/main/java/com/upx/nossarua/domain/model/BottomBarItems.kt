@@ -5,21 +5,19 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.upx.nossarua.presentation.navigation.AppDirections
+import kotlinx.serialization.Serializable
 
+@Serializable
 enum class BottomBarItems(
     val icon: ImageVector,
     val itemName: String,
-    val directions: AppDirections
-){
+) {
     MAP(
         icon = Icons.Filled.Home,
         itemName = "Mapa",
-        directions = AppDirections.Map
-
-    ),
-    ADD_INCIDENT(
+        ),
+    CREATE(
         icon = Icons.Filled.Add,
-        itemName = "Adicionar",
-        directions = AppDirections.AddIncident
+        itemName = "Reportar",
     )
 }

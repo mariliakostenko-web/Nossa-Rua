@@ -13,7 +13,7 @@ private val appLightColorScheme = lightColorScheme(
     primary = Jade,
     secondary = WebOrange,
     tertiary = Jade,
-    background = Jade,
+    background = MintCream,
     surface = MintCream,
     error = ImperialRed,
     onPrimary = LightText,
@@ -43,14 +43,7 @@ fun NossaRuaTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
-    val systemUiController = rememberSystemUiController()
-    val colorScheme = if (darkTheme) appDarkColorScheme else appLightColorScheme
-
-    SideEffect {
-        systemUiController.setSystemBarsColor(
-            color = if (darkTheme) DarkBackground else Jade
-        )
-    }
+    val colorScheme = appLightColorScheme
 
     MaterialTheme(
         colorScheme = colorScheme,

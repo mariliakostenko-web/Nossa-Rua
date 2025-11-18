@@ -14,46 +14,66 @@ import androidx.navigation.NavController
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.upx.nossarua.domain.model.BottomBarItems
 import com.upx.nossarua.presentation.navigation.AppDirections
 import com.upx.nossarua.presentation.theme.NossaRuaTheme
 import com.upx.nossarua.presentation.ui.common.BottomBar
+import com.upx.nossarua.presentation.ui.common.MapMarkerComposable
 import com.upx.nossarua.presentation.ui.common.TopBar
+import com.upx.nossarua.presentation.ui.screen.BaseViewModel
 
 @Composable
 fun MapScreen(
-    modifier: Modifier = Modifier,
-    viewModel: MapViewModel,
-    navController: NavController
+    viewModel: BaseViewModel,
+    navController: NavController,
+    userLocation: LatLng
 ) {
     val uiState by viewModel.uiState.collectAsState()
     NossaRuaTheme {
         Scaffold(
-            modifier = modifier.background(MaterialTheme.colorScheme.background),
+            modifier = Modifier.background(MaterialTheme.colorScheme.background),
             topBar = {
-                TopBar()
+                TopBar(
+                    screenTitle = "Mapa de Incidentes",
+                    onListClicked = {
+                        navController.navigate(AppDirections.List.route)
+                    }
+                )
             },
             bottomBar = {
                 BottomBar(
                     selectedItem = BottomBarItems.MAP,
-                    onClick = {
-                        navController.navigate(AppDirections.Map)
+                    onClick = { bottomBarItems ->
+                        when (bottomBarItems) {
+                            BottomBarItems.MAP -> {}
+
+                            BottomBarItems.CREATE -> navController.navigate(AppDirections.Create.route)
+                        }
                     }
                 )
             }
         ) { contentPadding ->
             Column(Modifier.padding(contentPadding)) {
-                // Initialize the camera position state, which controls the camera's position on the map
                 val cameraPositionState = rememberCameraPositionState {
-                    position = CameraPosition.fromLatLngZoom(LatLng(51.5074, -0.1278), 10f)
+                    position = CameraPosition(
+                        userLocation,
+                        15f,
+                        0f,
+                        0f
+                    )
                 }
 
-                // Display the Google Map without
                 GoogleMap(
                     modifier = Modifier.fillMaxSize(),
-                    cameraPositionState = cameraPositionState
-                )
+                    cameraPositionState = cameraPositionState,
+                    properties = MapProperties(isMyLocationEnabled = true)
+                ) {
+                    MapMarkerComposable(
+                        markers = uiState.marker
+                    )
+                }
             }
         }
     }
