@@ -1,17 +1,30 @@
 package com.upx.nossarua.presentation.ui.screen.create
 
+import android.os.Build
+import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
+import com.upx.nossarua.data.model.dto.CreateIncidentDTO
+import com.upx.nossarua.data.model.response.CreateResultResponse
+import com.upx.nossarua.data.repository.AppRepository
 import com.upx.nossarua.domain.model.StreetMarker
 import com.upx.nossarua.domain.model.StreetMarkerType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @HiltViewModel
-class CreateViewModel @Inject constructor() : ViewModel() {
+class CreateViewModel @Inject constructor(
+    private val appRepository: AppRepository
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(CreateUIState())
     val uiState: StateFlow<CreateUIState> = _uiState
@@ -118,12 +131,54 @@ class CreateViewModel @Inject constructor() : ViewModel() {
     }
 
     fun addIncident() {
-        _uiState.update { state ->
-            state.copy(
-                message = "Incidente reportado com sucesso!",
-                isSuccessDialog = true,
-                showDialog = true
-            )
+        viewModelScope.launch {
+            val marker = uiState.value.marker.firstOrNull()
+            if (marker == null) {
+                Log.d("CreateViewModel", "No marker found.")
+                return@launch
+            }
+
+            val result = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                appRepository.sendData(
+                    data = CreateIncidentDTO(
+                        data = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")),
+                        titulo = marker.title,
+                        lat = marker.position.latitude.toString(),
+                        lng = marker.position.longitude.toString(),
+                        categoria = marker.type.typeName,
+                        observacao = marker.description
+                    )
+                )
+            } else {
+                Log.d("CreateViewModel", "VERSION CODE ERROR")
+            }
+
+            Log.d("CreateViewModel", "Result: $result")
+
+            when (result) {
+                is CreateResultResponse.Error -> {
+                    Log.d("CreateViewModel", "Error: ${result.exception.message}")
+                    _uiState.update { state ->
+                        state.copy(
+                            message = result.exception.message ?: "Erro desconhecido! Tente novamente mais tarde",
+                            isSuccessDialog = false,
+                            showDialog = true
+                        )
+                    }
+                }
+
+                is CreateResultResponse.Success -> {
+                    Log.d("CreateViewModel", "Success: ${result.message}")
+                    _uiState.update { state ->
+                        state.copy(
+                            message = result.message,
+                            isSuccessDialog = true,
+                            showDialog = true
+                        )
+                    }
+                }
+            }
         }
     }
+
 }

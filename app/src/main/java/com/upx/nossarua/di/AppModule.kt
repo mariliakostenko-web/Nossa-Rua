@@ -1,5 +1,7 @@
 package com.upx.nossarua.di
 
+import com.google.gson.GsonBuilder
+import com.upx.nossarua.data.repository.AppRepository
 import com.upx.nossarua.data.service.AppService
 import com.upx.nossarua.utils.Constants
 import dagger.Module
@@ -33,10 +35,18 @@ object AppModule {
             .addInterceptor(loggingInterceptor)
             .build()
 
+        val gson = GsonBuilder().setLenient().create()
+
         return Retrofit.Builder()
             .baseUrl(Constants.BASE_URL)
             .client(httpClient)
-            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideRepository(appService: AppService): AppRepository {
+        return AppRepository(appService)
     }
 }

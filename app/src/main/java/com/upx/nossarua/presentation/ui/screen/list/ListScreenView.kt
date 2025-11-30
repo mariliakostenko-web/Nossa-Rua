@@ -35,12 +35,11 @@ import com.upx.nossarua.presentation.ui.screen.BaseViewModel
 
 @Composable
 fun ListScreen(
-    baseViewModel: BaseViewModel,
     navController: NavController,
-    viewModel: ListViewModel,
+    viewModel: BaseViewModel,
     userLocation: LatLng
 ) {
-    viewModel.saveLocation(userLocation, baseViewModel.uiState.value.marker)
+    viewModel.saveLocation(userLocation)
     val uiState by viewModel.uiState.collectAsState()
     NossaRuaTheme {
         Scaffold(
@@ -54,7 +53,7 @@ fun ListScreen(
             }
         ) { contentPadding ->
             LazyColumn(Modifier.padding(contentPadding)) {
-                items(uiState.markers) { marker ->
+                items(uiState.markerDistance) { marker ->
                     ListItem(marker)
                 }
             }

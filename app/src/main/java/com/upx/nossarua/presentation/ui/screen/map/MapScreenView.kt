@@ -23,6 +23,7 @@ import com.upx.nossarua.presentation.ui.common.BottomBar
 import com.upx.nossarua.presentation.ui.common.MapMarkerComposable
 import com.upx.nossarua.presentation.ui.common.TopBar
 import com.upx.nossarua.presentation.ui.screen.BaseViewModel
+import com.upx.nossarua.presentation.ui.screen.create.MessageDialog
 
 @Composable
 fun MapScreen(
@@ -31,6 +32,7 @@ fun MapScreen(
     userLocation: LatLng
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    viewModel.retrieveMarkers()
     NossaRuaTheme {
         Scaffold(
             modifier = Modifier.background(MaterialTheme.colorScheme.background),
@@ -74,6 +76,14 @@ fun MapScreen(
                         markers = uiState.marker
                     )
                 }
+                MessageDialog(
+                    isVisible = uiState.showDialog,
+                    onDismiss = {
+                        viewModel.onCloseDialog()
+                    },
+                    message = uiState.message,
+                    isSuccess = false
+                )
             }
         }
     }

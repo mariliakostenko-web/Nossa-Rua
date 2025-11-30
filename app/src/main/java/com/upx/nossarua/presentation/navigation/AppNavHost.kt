@@ -38,7 +38,6 @@ fun AppNavHost(
                 viewModel = hiltViewModel(),
                 navController = navController,
                 userLocation = userLocation,
-                baseViewModel = baseViewModel
             )
         }
         composable(
@@ -46,9 +45,8 @@ fun AppNavHost(
         ) { navBackStackEntry ->
             ListScreen(
                 navController = navController,
-                viewModel = hiltViewModel(),
+                viewModel = baseViewModel,
                 userLocation = userLocation,
-                baseViewModel = baseViewModel
             )
         }
         composable(

@@ -3,7 +3,6 @@ package com.upx.nossarua.presentation.ui.screen.create
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -57,11 +56,9 @@ import com.upx.nossarua.presentation.theme.NossaRuaTheme
 import com.upx.nossarua.presentation.ui.common.BottomBar
 import com.upx.nossarua.presentation.ui.common.MapMarkerComposable
 import com.upx.nossarua.presentation.ui.common.TopBar
-import com.upx.nossarua.presentation.ui.screen.BaseViewModel
 
 @Composable
 fun CreateScreenView(
-    baseViewModel: BaseViewModel,
     viewModel: CreateViewModel,
     navController: NavController,
     userLocation: LatLng
@@ -119,7 +116,6 @@ fun CreateScreenView(
                 FormFields(
                     modifier = Modifier.weight(if (uiState.marker.isEmpty()) 0.1f else 0.6f),
                     viewModel = viewModel,
-                    baseViewModel = baseViewModel
                 )
             }
         }
@@ -131,7 +127,6 @@ fun CreateScreenView(
 private fun FormFields(
     modifier: Modifier = Modifier,
     viewModel: CreateViewModel,
-    baseViewModel: BaseViewModel
 ) {
     val uiState by viewModel.uiState.collectAsState()
     LazyColumn(
@@ -254,9 +249,6 @@ private fun FormFields(
             MessageDialog(
                 isVisible = uiState.showDialog,
                 onDismiss = {
-                    if (uiState.isSuccessDialog) {
-                        baseViewModel.updateMarkers(uiState.marker.first())
-                    }
                     viewModel.onCloseDialog()
                 },
                 message = uiState.message,
